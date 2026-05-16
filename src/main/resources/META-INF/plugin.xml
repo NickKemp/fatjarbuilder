@@ -1,0 +1,70 @@
+<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
+<idea-plugin>
+    <id>com.github.nickkemp.fatjarbuilder</id>
+    <name>FatJar Builder</name>
+    <version>1.0.4</version>
+    <vendor email="nick.kemp@live.co.uk"
+            url="https://github.com/nickkemp">Nick Kemp</vendor>
+
+    <description><![CDATA[
+        <h3>FatJar Builder</h3>
+        <p>Build a single deployable fat JAR from any IntelliJ module with one click.
+        The Eclipse FatJar plugin equivalent for IntelliJ IDEA.</p>
+
+        <h3>Features</h3>
+        <ul>
+            <li>Right-click any module → <b>FatJar Builder → Build Fat JAR</b></li>
+            <li>Browses compiled classes to find and select your main class</li>
+            <li>Recursively includes all dependent module compiled classes</li>
+            <li>Extracts all dependency JARs into a single flat JAR</li>
+            <li>Merges <code>META-INF/services</code> files correctly (SLF4J, JAXB etc.)</li>
+            <li>Strips JAR signatures automatically (no more SecurityException)</li>
+            <li>Excludes unwanted packages with Ant-style glob patterns</li>
+            <li>Shows detailed timestamped build output in a dedicated tool window</li>
+            <li>Remembers settings per module between sessions</li>
+        </ul>
+
+        <h3>Why?</h3>
+        <p>Teams migrating from Eclipse miss the FatJar plugin. Maven shade plugin
+        works but breaks the IntelliJ debugger when delegation is enabled.
+        This plugin builds a deployable fat JAR without touching your Maven/Gradle
+        build configuration.</p>
+    ]]></description>
+
+
+    <!-- Compatible with IntelliJ IDEA 2022.2 and later -->
+    <idea-version since-build="241.0"/>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+
+    <actions>
+        <group id="FatJarBuilder.ProjectViewPopupMenu"
+               text="FatJar Builder"
+               popup="true">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <action id="FatJarBuilder.BuildAction"
+                    class="com.github.nickkemp.fatjarbuilder.FatJarAction"
+                    text="Build Fat JAR"
+                    description="Build a deployable fat JAR for this module"/>
+        </group>
+    </actions>
+
+    <extensions defaultExtensionNs="com.intellij">
+
+        <!-- Persistent settings per project -->
+        <projectService
+                serviceImplementation="com.github.nickkemp.fatjarbuilder.FatJarSettings"/>
+
+        <!-- Build output tool window -->
+        <toolWindow id="FatJar Builder"
+                    factoryClass="com.github.nickkemp.fatjarbuilder.FatJarToolWindowFactory"
+                    anchor="bottom"
+                    canCloseContents="false"
+                    doNotActivateOnStart="true"
+                    secondary="false"/>
+
+    </extensions>
+
+
+</idea-plugin>

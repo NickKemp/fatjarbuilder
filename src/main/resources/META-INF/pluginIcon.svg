@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
+  <!-- Background -->
+  <rect width="40" height="40" rx="6" fill="#2B5FD9"/>
+  <!-- JAR body -->
+  <rect x="10" y="14" width="20" height="18" rx="2" fill="white" opacity="0.9"/>
+  <!-- JAR lid -->
+  <rect x="8" y="10" width="24" height="6" rx="2" fill="white"/>
+  <!-- Arrow down into jar (merge/pack symbol) -->
+  <polygon points="20,17 16,22 18,22 18,27 22,27 22,22 24,22" fill="#2B5FD9"/>
+</svg>
