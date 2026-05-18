@@ -132,7 +132,7 @@ cd fatjarbuilder
 ./gradlew buildPlugin
 ```
 
-The plugin ZIP is produced at `build/distributions/JARBUILDER-1.0.0.zip`.
+The plugin ZIP is produced at `build/distributions/JARBUILDER-1.0.4.zip`.
 
 To run in a sandbox IntelliJ instance:
 
@@ -150,16 +150,22 @@ Issues and pull requests are welcome. Please open an issue before submitting a P
 
 ## Changelog
 
+### 1.0.4
+- Fixed package naming
+- Fixed deprecated PopupChooserBuilder API
+- Fixed tool window factory deprecated methods
+
+### 1.0.3
+- Raised minimum IDE version to 2024.1 for full compatibility
+
+### 1.0.2
+- Removed API warnings
+
+### 1.0.1
+- Raised minimum IDE version to 2024.1 for full compatibility
+
 ### 1.0.0
 - Initial release
-- Right-click module → Build Fat JAR
-- Main class browser from compiled output
-- Recursive module dependency collection
-- `META-INF/services` merging
-- Signature file stripping
-- Package excludes with glob patterns
-- Build output tool window with timestamps
-- Per-module persistent settings
 
 ---
 
