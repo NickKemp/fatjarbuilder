@@ -4,6 +4,15 @@
 
 ## Unreleased
 
+## 1.0.5
+
+- Added Build menu integration (Build → FatJar Builder → Build Fat JAR)
+- Added Before launch task (Run → Edit Configurations → Before launch → + → Build Fat JAR)
+- Added Artifact system integration (File → Project Structure → Artifacts → + → Fat JAR)
+- Main class browser in artifact settings
+- Fixed deprecated API usage throughout
+-
+
 ## 1.0.4
 
 - Fixed deprecated PopupChooserBuilder API

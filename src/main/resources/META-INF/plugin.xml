@@ -2,9 +2,9 @@
 <idea-plugin>
     <id>com.github.nickkemp.fatjarbuilder</id>
     <name>FatJar Builder</name>
-    <version>1.0.4</version>
-    <vendor email="nick.kemp@live.co.uk"
-            url="https://github.com/nickkemp">Nick Kemp</vendor>
+    <version>1.0.5</version>
+    <vendor email="nick@btconsulting.co.uk"
+            url="https://github.com/nickkemp/fatjarbuilder">Nick Kemp</vendor>
 
     <description><![CDATA[
         <h3>FatJar Builder</h3>
@@ -14,6 +14,8 @@
         <h3>Features</h3>
         <ul>
             <li>Right-click any module → <b>FatJar Builder → Build Fat JAR</b></li>
+            <li>Build menu → <b>FatJar Builder → Build Fat JAR</b></li>
+            <li>Add as a Before/After launch task in any run configuration</li>
             <li>Browses compiled classes to find and select your main class</li>
             <li>Recursively includes all dependent module compiled classes</li>
             <li>Extracts all dependency JARs into a single flat JAR</li>
@@ -31,14 +33,16 @@
         build configuration.</p>
     ]]></description>
 
-
-    <!-- Compatible with IntelliJ IDEA 2022.2 and later -->
+    <!-- Compatible with IntelliJ IDEA 2024.1 and later -->
     <idea-version since-build="241.0"/>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.java</depends>
+    <depends optional="true" config-file="fatjar-packaging.xml">com.intellij.java</depends>
 
     <actions>
+
+        <!-- Phase 1: Right-click context menu -->
         <group id="FatJarBuilder.ProjectViewPopupMenu"
                text="FatJar Builder"
                popup="true">
@@ -48,13 +52,25 @@
                     text="Build Fat JAR"
                     description="Build a deployable fat JAR for this module"/>
         </group>
+
+        <!-- Phase 1: Build menu -->
+        <group id="FatJarBuilder.BuildMenu"
+               text="FatJar Builder"
+               popup="true">
+            <add-to-group group-id="BuildMenu" anchor="last"/>
+            <action id="FatJarBuilder.BuildAction.Menu"
+                    class="com.github.nickkemp.fatjarbuilder.FatJarAction"
+                    text="Build Fat JAR"
+                    description="Build a deployable fat JAR for this module"/>
+        </group>
+
     </actions>
 
     <extensions defaultExtensionNs="com.intellij">
 
         <!-- Persistent settings per project -->
         <projectService
-                serviceImplementation="com.github.nickkemp.fatjarbuilder.FatJarSettings"/>
+            serviceImplementation="com.github.nickkemp.fatjarbuilder.FatJarSettings"/>
 
         <!-- Build output tool window -->
         <toolWindow id="FatJar Builder"
@@ -64,7 +80,14 @@
                     doNotActivateOnStart="true"
                     secondary="false"/>
 
-    </extensions>
+        <!-- Phase 2: Before/After run task -->
+        <stepsBeforeRunProvider
+            implementation="com.github.nickkemp.fatjarbuilder.FatJarBeforeRunTaskProvider"/>
 
+        <!-- Phase 3: Post build task for artifact system -->
+        <compiler.task implementation="com.github.nickkemp.fatjarbuilder.FatJarPostBuildTask"
+                       order="after"/>
+
+    </extensions>
 
 </idea-plugin>

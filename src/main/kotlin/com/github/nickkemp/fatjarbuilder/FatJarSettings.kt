@@ -7,7 +7,6 @@ import com.intellij.openapi.module.Module
  * Persistent settings stored per module.
  * IntelliJ automatically saves/loads these via the PersistentStateComponent mechanism.
  */
-@Service(Service.Level.PROJECT)
 @State(
     name = "FatJarSettings",
     storages = [Storage("fatjar-settings.xml")]
