@@ -1,7 +1,6 @@
 package com.github.nickkemp.fatjarbuilder
 
 import com.intellij.openapi.module.Module
-import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.ui.DialogWrapper
 import com.intellij.openapi.ui.Messages
 import com.intellij.ui.components.JBList
@@ -126,8 +125,7 @@ class FatJarDialog(private val module: Module) : DialogWrapper(module.project) {
 
     private fun findMainClasses(): List<String> {
         val mainClasses = mutableListOf<String>()
-        val outputPath  = CompilerModuleExtension
-            .getInstance(module)?.compilerOutputPath?.path ?: return emptyList()
+        val outputPath  = ModuleOutputFinder.findOutputPath(module) ?: return emptyList()
         scanDirForMainClasses(File(outputPath), File(outputPath), mainClasses)
         return mainClasses.sorted()
     }
@@ -147,8 +145,20 @@ class FatJarDialog(private val module: Module) : DialogWrapper(module.project) {
 
     private fun hasMainMethod(classFile: File): Boolean {
         return try {
-            val content = classFile.readBytes().toString(Charsets.ISO_8859_1)
-            content.contains("main") && content.contains("([Ljava/lang/String;)V")
+            val bytes = classFile.readBytes()
+            val content = bytes.toString(Charsets.ISO_8859_1)
+
+            // Skip interfaces — check access flags at bytes 6-7
+            // Interface flag is 0x0200
+            if (bytes.size > 7) {
+                val accessFlags = ((bytes[6].toInt() and 0xFF) shl 8) or
+                                   (bytes[7].toInt() and 0xFF)
+                if (accessFlags and 0x0200 != 0) return false
+            }
+
+            // Must have main method name and correct descriptor in constant pool
+            content.contains("main") &&
+            content.contains("([Ljava/lang/String;)V")
         } catch (e: Exception) {
             false
         }

@@ -27,8 +27,8 @@ object FatJarOutputManager {
      */
     fun clear(project: Project) {
         ApplicationManager.getApplication().invokeLater {
-            panels[project]?.clear()
             showToolWindow(project)
+            panels[project]?.clear()
         }
     }
 
@@ -39,6 +39,8 @@ object FatJarOutputManager {
         val timestamp = LocalTime.now().format(timeFmt)
         val formatted = if (line.isBlank()) "" else "[$timestamp] $line"
         ApplicationManager.getApplication().invokeLater {
+            // Ensure tool window is open and panel registered before logging
+            if (!panels.containsKey(project)) showToolWindow(project)
             panels[project]?.appendLine(formatted)
         }
     }
@@ -67,8 +69,12 @@ object FatJarOutputManager {
     }
 
     private fun showToolWindow(project: Project) {
-        ToolWindowManager.getInstance(project)
-            .getToolWindow("FatJar Builder")
-            ?.show()
+        val toolWindow = ToolWindowManager.getInstance(project)
+            .getToolWindow("FatJar Builder") ?: return
+        if (!toolWindow.isVisible) {
+            toolWindow.activate(null)
+        } else {
+            toolWindow.show()
+        }
     }
 }

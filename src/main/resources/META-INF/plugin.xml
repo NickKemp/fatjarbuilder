@@ -2,7 +2,7 @@
 <idea-plugin>
     <id>com.github.nickkemp.fatjarbuilder</id>
     <name>FatJar Builder</name>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
     <vendor email="nick@btconsulting.co.uk"
             url="https://github.com/nickkemp/fatjarbuilder">Nick Kemp</vendor>
 
@@ -13,16 +13,18 @@
 
         <h3>Features</h3>
         <ul>
-            <li>Right-click any module → <b>FatJar Builder → Build Fat JAR</b></li>
             <li>Build menu → <b>FatJar Builder → Build Fat JAR</b></li>
-            <li>Add as a Before/After launch task in any run configuration</li>
+            <li>Add as a Before launch task in any run configuration</li>
+            <li>Artifact system integration (File → Project Structure → Artifacts)</li>
             <li>Browses compiled classes to find and select your main class</li>
             <li>Recursively includes all dependent module compiled classes</li>
+            <li>Supports both Maven and Gradle projects</li>
             <li>Extracts all dependency JARs into a single flat JAR</li>
             <li>Merges <code>META-INF/services</code> files correctly (SLF4J, JAXB etc.)</li>
             <li>Strips JAR signatures automatically (no more SecurityException)</li>
             <li>Excludes unwanted packages with Ant-style glob patterns</li>
             <li>Shows detailed timestamped build output in a dedicated tool window</li>
+            <li>Notification with open folder link after successful build</li>
             <li>Remembers settings per module between sessions</li>
         </ul>
 
@@ -42,18 +44,7 @@
 
     <actions>
 
-        <!-- Phase 1: Right-click context menu -->
-        <group id="FatJarBuilder.ProjectViewPopupMenu"
-               text="FatJar Builder"
-               popup="true">
-            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
-            <action id="FatJarBuilder.BuildAction"
-                    class="com.github.nickkemp.fatjarbuilder.FatJarAction"
-                    text="Build Fat JAR"
-                    description="Build a deployable fat JAR for this module"/>
-        </group>
-
-        <!-- Phase 1: Build menu -->
+        <!-- Build menu -->
         <group id="FatJarBuilder.BuildMenu"
                text="FatJar Builder"
                popup="true">
@@ -80,13 +71,18 @@
                     doNotActivateOnStart="true"
                     secondary="false"/>
 
-        <!-- Phase 2: Before/After run task -->
+        <!-- Before/After run task -->
         <stepsBeforeRunProvider
             implementation="com.github.nickkemp.fatjarbuilder.FatJarBeforeRunTaskProvider"/>
 
-        <!-- Phase 3: Post build task for artifact system -->
+        <!-- Post build task for artifact system -->
         <compiler.task implementation="com.github.nickkemp.fatjarbuilder.FatJarPostBuildTask"
-                       order="after"/>
+                       order="last"/>
+
+        <!-- Notification group for build success balloon -->
+        <notificationGroup id="FatJar Builder"
+                           displayType="BALLOON"
+                           isLogByDefault="false"/>
 
     </extensions>
 

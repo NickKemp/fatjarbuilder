@@ -1,7 +1,7 @@
 package com.github.nickkemp.fatjarbuilder
 
+import com.intellij.openapi.module.Module
 import com.intellij.openapi.module.ModuleManager
-import com.intellij.openapi.roots.CompilerModuleExtension
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.ui.popup.PopupChooserBuilder
 import com.intellij.packaging.ui.ArtifactEditorContext
@@ -143,11 +143,10 @@ class FatJarArtifactPropertiesEditor(
 
     private fun browseMainClass() {
         val moduleName = moduleCombo.selectedItem as? String ?: return
-        val module = ModuleManager.getInstance(project)
+        val module: com.intellij.openapi.module.Module = ModuleManager.getInstance(project)
             .findModuleByName(moduleName) ?: return
 
-        val outputPath = CompilerModuleExtension
-            .getInstance(module)?.compilerOutputPath?.path ?: run {
+        val outputPath = ModuleOutputFinder.findOutputPath(module) ?: run {
             Messages.showInfoMessage(
                 project,
                 "No compiler output found for module $moduleName.\n" +
@@ -189,8 +188,14 @@ class FatJarArtifactPropertiesEditor(
                 val className = file.relativeTo(root).path
                     .replace(File.separatorChar, '.')
                     .removeSuffix(".class")
-                val content = file.readBytes().toString(Charsets.ISO_8859_1)
-                if (content.contains("main") &&
+                val bytes = file.readBytes()
+                val content = bytes.toString(Charsets.ISO_8859_1)
+                // Skip interfaces
+                val isInterface = bytes.size > 7 &&
+                    (((bytes[6].toInt() and 0xFF) shl 8) or
+                     (bytes[7].toInt() and 0xFF)) and 0x0200 != 0
+                if (!isInterface &&
+                    content.contains("main") &&
                     content.contains("([Ljava/lang/String;)V"))
                     result.add(className)
             }

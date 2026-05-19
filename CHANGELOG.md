@@ -4,6 +4,17 @@
 
 ## Unreleased
 
+## 1.0.6
+
+- Added Gradle project support — output path detection for Maven and Gradle
+- Fixed main class scanner false positives — interface detection via bytecode
+- Extracted FatJarCore — shared build logic between all build methods
+- Fixed JAR size display — shows bytes/KB/MB accurately
+- Fixed Windows file lock on rebuild — uses temp file with NIO atomic move
+- Added build success notification balloon with Open output folder button
+- Removed right-click project panel action — Build menu is the entry point
+- Fixed compiler.task order attribute
+
 ## 1.0.5
 
 - Added Build menu integration (Build → FatJar Builder → Build Fat JAR)
