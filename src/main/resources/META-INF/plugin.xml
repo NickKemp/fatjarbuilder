@@ -2,8 +2,8 @@
 <idea-plugin>
     <id>com.github.nickkemp.fatjarbuilder</id>
     <name>FatJar Builder</name>
-    <version>1.0.6</version>
-    <vendor email="nick@btconsulting.co.uk"
+    <version>1.0.7</version>
+    <vendor email="nick.kemp@live.co.uk"
             url="https://github.com/nickkemp/fatjarbuilder">Nick Kemp</vendor>
 
     <description><![CDATA[

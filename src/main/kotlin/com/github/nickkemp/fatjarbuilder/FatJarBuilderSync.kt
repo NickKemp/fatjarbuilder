@@ -20,6 +20,7 @@ class FatJarBuilderSync(
             FatJarOutputManager.logBlank(project)
             FatJarOutputManager.log(project, "══════════════════════════════════════")
             FatJarOutputManager.log(project, "BUILD SUCCESSFUL")
+            FatJarOutputManager.log(project, "Output: ${settings.outputDirectory}/${settings.outputJarName}")
             FatJarOutputManager.log(project, "══════════════════════════════════════")
             true
         } catch (e: Exception) {

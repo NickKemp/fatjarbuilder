@@ -4,6 +4,12 @@
 
 ## Unreleased
 
+## 1.0.7
+
+- Fixed inconsistent success logging between Build menu and artifact/before-run builds
+- Output path now shown in tool window for all build methods
+-
+
 ## 1.0.6
 
 - Added Gradle project support — output path detection for Maven and Gradle
