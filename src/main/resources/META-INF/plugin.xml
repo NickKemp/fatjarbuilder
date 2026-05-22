@@ -2,7 +2,7 @@
 <idea-plugin>
     <id>com.github.nickkemp.fatjarbuilder</id>
     <name>FatJar Builder</name>
-    <version>1.0.7</version>
+    <version>1.0.8</version>
     <vendor email="nick.kemp@live.co.uk"
             url="https://github.com/nickkemp/fatjarbuilder">Nick Kemp</vendor>
 
@@ -76,8 +76,8 @@
             implementation="com.github.nickkemp.fatjarbuilder.FatJarBeforeRunTaskProvider"/>
 
         <!-- Post build task for artifact system -->
-        <compiler.task implementation="com.github.nickkemp.fatjarbuilder.FatJarPostBuildTask"
-                       order="last"/>
+        <postStartupActivity
+            implementation="com.github.nickkemp.fatjarbuilder.FatJarPostBuildTask"/>
 
         <!-- Notification group for build success balloon -->
         <notificationGroup id="FatJar Builder"

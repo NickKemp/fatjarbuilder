@@ -1,43 +1,59 @@
 package com.github.nickkemp.fatjarbuilder
 
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.compiler.CompilationStatusListener
 import com.intellij.openapi.compiler.CompileContext
-import com.intellij.openapi.compiler.CompileTask
+import com.intellij.openapi.compiler.CompilerTopics
 import com.intellij.openapi.module.ModuleManager
+import com.intellij.openapi.project.Project
+import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.packaging.artifacts.ArtifactManager
 import com.intellij.packaging.artifacts.ArtifactPropertiesProvider
 
 /**
- * Post-compile task that builds Fat JAR artifacts after the
- * normal artifact build completes.
+ * Listens for compilation completion and builds Fat JAR artifacts
+ * marked with "Include in project build" (isBuildOnMake = true).
  *
- * Registered in plugin.xml via the compiler.task extension point:
- *   <compiler.task implementation="...FatJarPostBuildTask" order="after"/>
+ * Uses CompilationStatusListener which fires after the entire build
+ * pipeline completes — including artifact building — so compiled
+ * classes are always available when we run.
  *
- * This replaces the deprecated CompilerManager.addAfterTask() approach.
+ * Registered as a postStartupActivity in plugin.xml.
  */
-class FatJarPostBuildTask : CompileTask {
+class FatJarPostBuildTask : ProjectActivity {
 
-    override fun execute(context: CompileContext): Boolean {
-        return buildFatJarArtifacts(context)
+    override suspend fun execute(project: Project) {
+        val connection = project.messageBus.connect()
+        connection.subscribe(CompilerTopics.COMPILATION_STATUS, object : CompilationStatusListener {
+            override fun compilationFinished(
+                aborted: Boolean,
+                errors: Int,
+                warnings: Int,
+                compileContext: CompileContext
+            ) {
+                // Skip if aborted or there were compile errors
+                if (aborted || errors > 0) return
+                buildFatJarArtifacts(compileContext)
+            }
+        })
     }
 
-    private fun buildFatJarArtifacts(context: CompileContext): Boolean {
+    private fun buildFatJarArtifacts(context: CompileContext) {
         val project = context.project
 
-        // ArtifactManager must be accessed inside a read action
         val fatJarArtifacts = ApplicationManager.getApplication()
             .runReadAction<List<com.intellij.packaging.artifacts.Artifact>> {
                 ArtifactManager.getInstance(project)
                     .artifacts
                     .filter { it.artifactType is FatJarArtifactType }
+                    .filter { it.isBuildOnMake }
             }
 
-        if (fatJarArtifacts.isEmpty()) return true
+        if (fatJarArtifacts.isEmpty()) return
 
         val provider = ArtifactPropertiesProvider.EP_NAME
             .findExtension(FatJarArtifactPropertiesProvider::class.java)
-            ?: return true
+            ?: return
 
         for (artifact in fatJarArtifacts) {
             val properties = artifact.getProperties(provider)
@@ -63,8 +79,7 @@ class FatJarPostBuildTask : CompileTask {
             FatJarOutputManager.log(project,
                 "Building Fat JAR artifact: ${artifact.name}")
 
-            FatJarBuilderSync(module, settings).build()
+            FatJarBuilderSync(module, settings, "ARTIFACT BUILD").build()
         }
-        return true
     }
 }

@@ -63,7 +63,7 @@ class FatJarArtifactProperties : ArtifactProperties<FatJarArtifactProperties.Sta
 
         FatJarOutputManager.clear(project)
         FatJarOutputManager.log(project, "Building artifact: ${artifact.name}")
-        FatJarBuilderSync(module, settings).build()
+        FatJarBuilderSync(module, settings, "ARTIFACT BUILD").build()
     }
 }
 

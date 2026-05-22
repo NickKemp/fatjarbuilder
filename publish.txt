@@ -1,0 +1,7 @@
+perm-Tmlja19LZW1w.OTItMTcyODM=.y8U3b5NYMqmiTNPEzFbyPbDOo1XRHg
+
+gradlew publishPlugin -Ppublish.token=perm-Tmlja19LZW1w.OTItMTcyODM=.y8U3b5NYMqmiTNPEzFbyPbDOo1XRHg
+
+git add .
+git commit -m "Release 1.0.8 - Fixed Include in project build ordering, build source labels"
+git push

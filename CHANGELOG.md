@@ -4,6 +4,17 @@
 
 ## Unreleased
 
+## 1.0.8
+
+- Fixed "Include in project build" — fat JAR now builds correctly after
+  compilation completes, matching IntelliJ's own WAR/JAR artifact behaviour
+- Fixed build ordering — fat JAR no longer builds before compiled classes
+  are available
+- Fat JAR build skipped automatically when there are compile errors
+- Build source now shown in tool window output — ARTIFACT BUILD SUCCESSFUL,
+  BEFORE LAUNCH BUILD SUCCESSFUL, or BUILD SUCCESSFUL depending on which
+  method triggered the build
+
 ## 1.0.7
 
 - Fixed inconsistent success logging between Build menu and artifact/before-run builds

@@ -140,7 +140,7 @@ class FatJarBeforeRunTaskProvider : BeforeRunTaskProvider<FatJarBeforeRunTaskPro
             "Before launch: Building Fat JAR for ${task.moduleName}...")
 
         return try {
-            FatJarBuilderSync(module, settings).build()
+            FatJarBuilderSync(module, settings, "BEFORE LAUNCH BUILD").build()
         } catch (e: Exception) {
             FatJarOutputManager.logError(project, e.message ?: "Unknown error")
             false
