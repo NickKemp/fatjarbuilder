@@ -1,5 +1,6 @@
 package com.github.nickkemp.fatjarbuilder
 
+import com.intellij.openapi.editor.colors.EditorColorsManager
 import com.intellij.ui.components.JBScrollPane
 import java.awt.BorderLayout
 import java.awt.Font
@@ -10,9 +11,14 @@ class FatJarOutputPanel : JPanel(BorderLayout()) {
 
     private val textArea = JTextArea().apply {
         isEditable    = false
-        font          = Font(Font.MONOSPACED, Font.PLAIN, 12)
         lineWrap      = false
         wrapStyleWord = false
+
+        // Use IntelliJ's configured editor font to match the Build window
+        val editorFont = EditorColorsManager.getInstance().globalScheme.getFont(
+            com.intellij.openapi.editor.colors.EditorFontType.PLAIN
+        )
+        font = editorFont ?: Font(Font.MONOSPACED, Font.PLAIN, 12)
     }
 
     init {

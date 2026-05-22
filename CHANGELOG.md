@@ -4,6 +4,11 @@
 
 ## Unreleased
 
+## 1.0.9
+
+- Fixed FatJar Builder tool window font — now matches IntelliJ editor font
+  (same font family and size as the Build window)
+
 ## 1.0.8
 
 - Fixed "Include in project build" — fat JAR now builds correctly after
